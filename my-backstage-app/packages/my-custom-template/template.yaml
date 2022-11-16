@@ -1,0 +1,83 @@
+apiVersion: backstage.io/v1beta2
+kind: Template
+metadata:
+  name: my-custom-template
+  title: Create A Template
+  description: Create a new dotnet template project for backstage
+  tags:
+    - dotnet
+    - template
+spec:
+  owner: sm@example.com
+  type: website
+  parameters:
+    - title: Template for study purposes
+      required:
+        - dtd_id
+        - author
+      properties:
+        component_id:
+          title: template-demo
+          type: string
+          description: template component demo
+        description:
+          title: A template demo using dotnet
+          type: string
+          description: Help others understand what this template is used for.
+        author:
+          title: Author
+          type: string
+          description: Author of the template
+          # ui:field: OwnerPicker
+          # ui:options:
+          #   allowedKinds: 
+          #     - Group
+          authorEmail:
+            title: Author authorEmail
+            type: string
+            description: Email of the author
+    - title: Choose a location  
+      required:
+        - repoUrl
+      properties: 
+        repoUrl:
+          title: Repository Location
+          type: string
+          ui:field: RepoUrlPicker
+          ui:options:
+            allowedHosts:
+              - github.com
+              #- dev.azure.com
+              #- gitlab.com
+      steps:
+    - id: template
+      name: Fetch Skeleton + Template
+      action: fetch:template
+      input:
+        url: ./skeleton
+        copyWithoutRender:
+          - .github/workflows/*
+        values:
+          component_id: '{{ parameters.component_id }}'
+          description: '{{ parameters.description }}'
+          destination: '{{ parseRepoUrl parameters.repoUrl }}'
+          owner: '{{ parameters.owner }}'
+
+    - id: publish
+      name: Publish
+      action: publish:github
+      input:
+        allowedHosts: ['github.com']
+        description: 'This is {{ parameters.component_id }}'
+        repoUrl: '{{ parameters.repoUrl }}'
+
+    - id: register
+      name: Register
+      action: catalog:register
+      input:
+        repoContentsUrl: '{{ steps.publish.output.repoContentsUrl }}'
+        catalogInfoPath: '/catalog-info.yaml'
+
+  output:
+    remoteUrl: '{{ steps.publish.output.remoteUrl }}'
+    entityRef: '{{ steps.register.output.entityRef }}'
