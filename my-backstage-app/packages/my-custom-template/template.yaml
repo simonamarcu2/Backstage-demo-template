@@ -4,12 +4,14 @@ metadata:
   name: my-custom-template
   title: Create A Template
   description: Create a new dotnet template project for backstage
+  entity:
+    location:default
+  type : plugin
   tags:
     - dotnet
     - template
 spec:
-  owner: sm@example.com
-  type: website
+  author: sm@example.com
   parameters:
     - title: Template for study purposes
       required:
@@ -28,7 +30,7 @@ spec:
           title: Author
           type: string
           description: Author of the template
-          # ui:field: OwnerPicker
+          # ui:field: authorPicker
           # ui:options:
           #   allowedKinds: 
           #     - Group
@@ -36,7 +38,7 @@ spec:
             title: Author authorEmail
             type: string
             description: Email of the author
-    - title: Choose a location  
+    - title: Choose a location 
       required:
         - repoUrl
       properties: 
@@ -55,13 +57,12 @@ spec:
       action: fetch:template
       input:
         url: ./skeleton
-        copyWithoutRender:
-          - .github/workflows/*
         values:
           component_id: '{{ parameters.component_id }}'
           description: '{{ parameters.description }}'
-          destination: '{{ parseRepoUrl parameters.repoUrl }}'
-          owner: '{{ parameters.owner }}'
+          destination: '{{ parameters.repoUrl | parseRepoUrl }}'
+          author: '{{ parameters.author }}'
+          authorEmail: '{{parameters.authorEmail}}'
 
     - id: publish
       name: Publish

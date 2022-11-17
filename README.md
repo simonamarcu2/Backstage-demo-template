@@ -48,4 +48,5 @@ yarn dev
 
 
 *nunjacks*
+*<http://httpbin.org/#/>*
 *curl -X GET "https://httpbin.org/get" -H "accept: application/json"*
