@@ -1,0 +1,23 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: ${{ values.component_id | dump }}
+  description: ${{ values.description | dump }}
+  tags:
+    - dotnet
+    - webapi
+  links:
+    - url: https://dev.azure.com/FinAppsEngineering/Platform%20Services%20Teams/_git/${{ values.component_id }}
+      title: dotnet web api created using backstage template
+      icon: dashboard
+      type: template
+  annotations:
+    gitlab.com/project-id: '33655'
+    dev.azure.com/project-repo: Platform Services Teams/${{ values.component_id }}
+    #dev.azure.com/project: Platform Services Teams
+    #dev.azure.com/build-definition: ${{ values.component_id }}
+spec:
+  type: service
+  lifecycle: experimental
+  owner: Platform Services Teams
+  system: ADO
